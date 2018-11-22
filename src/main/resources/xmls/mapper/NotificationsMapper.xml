@@ -78,4 +78,16 @@
     n_comment
     from notifications
   </select>
+  <select id="selectByType" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select n_id, n_title, pt_id, n_deadline, n_files, n_regTime, n_upTime, nt_id, n_content,
+    n_comment
+    from notifications
+    where nt_id = #{ntId,jdbcType=INTEGER}
+  </select>
+  <select id="selectByNPtype" resultMap="BaseResultMap">
+    select n_id, n_title, pt_id, n_deadline, n_files, n_regTime, n_upTime, nt_id, n_content,
+    n_comment
+    from notifications
+    where nt_id=#{ntId,jdbcType=INTEGER} and pt_id=#{ptId,jdbcType=INTEGER}
+  </select>
 </mapper>

@@ -33,11 +33,11 @@ public class CharacterService {
 		return characters;
 	}
 
-	public List<Characters> selectByContent(String content, int pageNum, int pageSize){
+	public List<Characters> selectByComment(String cComment, int pageNum, int pageSize){
 		PageHelper.startPage(pageNum, pageSize);
-		if(content == null || content == "")
+		if(cComment == null || cComment == "")
 			return charactersMapper.selectAll();
 		else
-			return charactersMapper.selectByContent(content);
+			return charactersMapper.selectByComment(cComment);
 	}
 }

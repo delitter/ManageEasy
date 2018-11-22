@@ -43,4 +43,14 @@ public interface NotificationsMapper {
      * @mbg.generated
      */
     int updateByPrimaryKey(Notifications record);
+
+    /**
+     * select by notification type
+     */
+    List<Notifications> selectByType(int ntId);
+
+    /**
+     * select by notification type and project type
+     */
+    List<Notifications> selectByNPtype(int ntId, int ptId);
 }

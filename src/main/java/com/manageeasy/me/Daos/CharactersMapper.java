@@ -48,5 +48,5 @@ public interface CharactersMapper {
     /**
      * 根据备注筛选
      */
-    List<Characters> selectByContent(String content);
+    List<Characters> selectByComment(String cComment);
 }
