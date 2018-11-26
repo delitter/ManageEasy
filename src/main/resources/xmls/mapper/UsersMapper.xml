@@ -70,4 +70,14 @@
     select u_id, u_name, u_password, u_regTime, u_upTime, c_id, d_id, u_comment
     from users
   </select>
+  <select id="selectByCid" resultMap="BaseResultMap">
+    select u_id, u_name, u_password, u_regTime, u_upTime, c_id, d_id, u_comment
+    from users
+    where c_id = #{cId,jdbcType=INTEGER}
+  </select>
+  <select id="selectByName" resultMap="BaseResultMap">
+    select u_id, u_name, u_password, u_regTime, u_upTime, c_id, d_id, u_comment
+    from users
+    where u_name = #{uName,jdbcType=VARCHAR}
+  </select>
 </mapper>

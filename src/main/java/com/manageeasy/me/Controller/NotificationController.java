@@ -1,8 +1,10 @@
 package com.manageeasy.me.Controller;
 
 import com.manageeasy.me.Models.Notifications;
+import com.manageeasy.me.Models.Projecttype;
 import com.manageeasy.me.Service.FileService;
 import com.manageeasy.me.Service.NotificationService;
+import com.manageeasy.me.Service.ProjectTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,9 @@ public class NotificationController {
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private ProjectTypeService projectTypeService;
 
     private static String filePath = "";
 
@@ -59,5 +64,34 @@ public class NotificationController {
     public ResponseEntity<List<Notifications>> queryWithProj(
             @RequestParam int ntid, @RequestParam int ptid, @RequestParam int pageNum, @RequestParam int pageSize){
         return new ResponseEntity<>(notificationService.selectByNPtype(ntid, ptid, pageNum, pageSize), HttpStatus.ACCEPTED);
+    }
+
+    public class NotiFullInfo{
+        private Notifications notifications;
+        private Projecttype projecttype;
+
+        public Notifications getNotifications() {
+            return notifications;
+        }
+
+        public void setNotifications(Notifications notifications) {
+            this.notifications = notifications;
+        }
+
+        public Projecttype getProjecttype() {
+            return projecttype;
+        }
+
+        public void setProjecttype(Projecttype projecttype) {
+            this.projecttype = projecttype;
+        }
+    }
+
+    @RequestMapping(value = "/queryFullInfo", method = RequestMethod.GET)
+    public ResponseEntity<NotiFullInfo> queryFullInfo(int id){
+        NotiFullInfo notiFullInfo = new NotiFullInfo();
+        notiFullInfo.setNotifications(notificationService.selectFullInfo(id));
+        notiFullInfo.setProjecttype(projectTypeService.selectById(notiFullInfo.getProjecttype().getPtId()));
+        return new ResponseEntity<>(notiFullInfo, HttpStatus.ACCEPTED);
     }
 }

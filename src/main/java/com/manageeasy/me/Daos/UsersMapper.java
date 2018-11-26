@@ -43,4 +43,14 @@ public interface UsersMapper {
      * @mbg.generated
      */
     int updateByPrimaryKey(Users record);
+
+    /**
+     * select by character id
+     */
+    List<Users> selectByCid(int cId);
+
+    /**
+     * select by username
+     */
+    Users selectByName(String uName);
 }

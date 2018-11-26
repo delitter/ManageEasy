@@ -2,22 +2,21 @@ package com.manageeasy.me.Controller;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 @Controller
 @RequestMapping("/file")
 public class FileController {
     @RequestMapping(value = "/download", method = RequestMethod.GET)
-    public ResponseEntity<InputStreamResource> download(String path) throws IOException {
+    public ResponseEntity<InputStreamResource> download(@RequestParam String path) throws IOException {
         FileSystemResource file = new FileSystemResource(path);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate");

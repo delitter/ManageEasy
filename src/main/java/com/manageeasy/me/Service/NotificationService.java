@@ -5,14 +5,9 @@ import com.manageeasy.me.Daos.NotificationsMapper;
 import com.manageeasy.me.Models.Notifications;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ClassUtils;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class NotificationService {
@@ -47,5 +42,9 @@ public class NotificationService {
     public List<Notifications> selectByNPtype(int ntid, int ptid, int pageNum, int pageSize){
         PageHelper.startPage(pageNum, pageSize);
         return notificationsMapper.selectByNPtype(ntid, ptid);
+    }
+
+    public Notifications selectFullInfo(int id){
+        return notificationsMapper.selectByPrimaryKey(id);
     }
 }
