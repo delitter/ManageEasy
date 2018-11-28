@@ -43,4 +43,14 @@ public interface ProjectsMapper {
      * @mbg.generated
      */
     int updateByPrimaryKey(Projects record);
+
+    /**
+     * select by user id and project type
+     */
+    List<Projects> selectByUPt(int uId, int ptId);
+
+    /**
+     * select by state and project type
+     */
+    List<Projects> selectBySPt(int pState, int ptId);
 }

@@ -35,6 +35,7 @@ public class NotificationController {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ResponseEntity<Notifications> add(@RequestBody Notifications notifications){
         notifications.setnFiles(filePath);
+        filePath = "";
         return new ResponseEntity<>(notificationService.add(notifications), HttpStatus.ACCEPTED);
     }
 

@@ -92,4 +92,16 @@
     de_file, pr_file, me_file, fi_file, p_state, f_reason
     from projects
   </select>
+  <select id="selectByUPt" resultMap="BaseResultMap">
+    select p_id, pt_id, pl_id, p_name, p_start, p_end, u_id, u_phone, u_email, ma_id,
+    de_file, pr_file, me_file, fi_file, p_state, f_reason
+    from projects
+    where u_id = #{uId,jdbcType=INTEGER} and pt_id = #{ptId,jdbcType=INTEGER}
+  </select>
+  <select id="selectBySPt" resultMap="BaseResultMap">
+    select p_id, pt_id, pl_id, p_name, p_start, p_end, u_id, u_phone, u_email, ma_id,
+    de_file, pr_file, me_file, fi_file, p_state, f_reason
+    from projects
+    where p_state = #{pState,jdbcType=INTEGER} and pt_id = #{ptId,jdbcType=INTEGER}
+  </select>
 </mapper>
