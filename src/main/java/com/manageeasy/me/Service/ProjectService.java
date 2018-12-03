@@ -34,4 +34,8 @@ public class ProjectService {
     public List<Projects> selectBySPt(int state, int pType){
         return projectsMapper.selectBySPt(state, pType);
     }
+
+    public Projects selectByKey(int id){
+        return projectsMapper.selectByPrimaryKey(id);
+    }
 }

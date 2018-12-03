@@ -67,6 +67,6 @@
   <select id="selectByComment" parameterType="java.lang.String" resultMap="BaseResultMap">
     select c_id, c_name, c_regTime, c_upTime, c_desc, c_comment
     from characters
-    where c_comment = #{cComment,jdbcType=VARCHAR}
+    where c_comment = #{cComment,jdbcType=LONGVARCHAR}
   </select>
 </mapper>

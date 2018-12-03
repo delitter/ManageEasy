@@ -1,6 +1,9 @@
 package com.manageeasy.me.Controller;
 
+import com.manageeasy.me.Models.Departments;
+import com.manageeasy.me.Models.QueryModel;
 import com.manageeasy.me.Models.Users;
+import com.manageeasy.me.Service.DepartmentService;
 import com.manageeasy.me.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -24,6 +28,10 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private DepartmentService departmentService;
+
+    //登录，成功则返回角色Id，否则返回-1
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String name = request.getParameter("username");
@@ -48,6 +56,7 @@ public class UserController {
         }
     }
 
+    //退出，使session失效
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public ResponseEntity<String> logout(HttpServletRequest request){
         HttpSession session = request.getSession();
@@ -55,24 +64,58 @@ public class UserController {
         return new ResponseEntity<>("成功", HttpStatus.OK);
     }
 
+    //新增
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ResponseEntity<Users> add(@RequestBody Users users){
         return new ResponseEntity<>(userService.add(users), HttpStatus.OK);
     }
 
+    //删除
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public ResponseEntity<String> delete(@RequestParam int id){
         return new ResponseEntity<>(userService.delete(id), HttpStatus.OK);
     }
 
+    //修改
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ResponseEntity<Users> update(@RequestBody Users users){
         return new ResponseEntity<>(userService.update(users), HttpStatus.OK);
     }
 
+    class UserResp{
+        private Users users;
+        private Departments departments;
+
+        public UserResp(){}
+        public Users getUsers() {
+            return users;
+        }
+
+        public void setUsers(Users users) {
+            this.users = users;
+        }
+
+        public Departments getDepartments() {
+            return departments;
+        }
+
+        public void setDepartments(Departments departments) {
+            this.departments = departments;
+        }
+    }
+    //查询，传0获取所有
     @RequestMapping(value = "/query", method = RequestMethod.GET)
-    public ResponseEntity<List<Users>> query(@RequestParam int cid){
-        return new ResponseEntity<>(userService.selectByCid(cid), HttpStatus.OK);
+    public ResponseEntity<QueryModel> query(
+            @RequestParam int cid, @RequestParam int pageNum, @RequestParam int pageSize){
+        List<Users> users = userService.selectByCid(cid, pageNum, pageSize);
+        ArrayList<UserResp> userResps = new ArrayList<>();
+        for(Users u : users){
+            UserResp userResp = new UserResp();
+            userResp.setUsers(u);
+            userResp.setDepartments(departmentService.selectById(u.getdId()));
+            userResps.add(userResp);
+        }
+        return new ResponseEntity<>(new QueryModel<>(userResps, userResps.size()), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/resetpw", method = RequestMethod.POST)

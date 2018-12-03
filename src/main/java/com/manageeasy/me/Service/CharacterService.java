@@ -1,8 +1,11 @@
 package com.manageeasy.me.Service;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.manageeasy.me.Models.Characters;
+import com.manageeasy.me.Models.QueryModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
 import com.manageeasy.me.Daos.CharactersMapper;
@@ -11,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
+@Controller
 public class CharacterService {
 
 	@Autowired
@@ -33,11 +37,19 @@ public class CharacterService {
 		return characters;
 	}
 
-	public List<Characters> selectByComment(String cComment, int pageNum, int pageSize){
-		PageHelper.startPage(pageNum, pageSize);
-		if(cComment == null || cComment == "")
-			return charactersMapper.selectAll();
+	public QueryModel selectByComment(String cComment, int pageNum, int pageSize){
+		if(pageNum != 0)
+			PageHelper.startPage(pageNum, pageSize);
+		List<Characters> characters;
+		if(cComment == null || cComment == ""){
+			characters = charactersMapper.selectAll();
+		}
+		else {
+			characters = charactersMapper.selectByComment(cComment);
+		}
+		if(pageNum != 0)
+			return new QueryModel(characters, ((Page)characters).getTotal());
 		else
-			return charactersMapper.selectByComment(cComment);
+			return new QueryModel(characters, characters.size());
 	}
 }

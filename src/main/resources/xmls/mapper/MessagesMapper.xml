@@ -60,4 +60,8 @@
     select m_id, m_time, mt_id, m_content
     from messages
   </select>
+  <select id="countAll" resultMap="BaseResultMap">
+    select count(m_id)
+    from messages
+  </select>
 </mapper>

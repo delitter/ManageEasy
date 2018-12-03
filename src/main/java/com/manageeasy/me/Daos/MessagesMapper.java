@@ -43,4 +43,9 @@ public interface MessagesMapper {
      * @mbg.generated
      */
     int updateByPrimaryKey(Messages record);
+
+    /**
+     * count the num of messages
+     */
+    int countAll();
 }

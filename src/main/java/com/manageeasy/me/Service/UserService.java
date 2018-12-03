@@ -1,5 +1,6 @@
 package com.manageeasy.me.Service;
 
+import com.github.pagehelper.PageHelper;
 import com.manageeasy.me.Daos.UsersMapper;
 import com.manageeasy.me.Models.Users;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,8 @@ public class UserService {
         return users;
     }
 
-    public List<Users> selectByCid(int id){
+    public List<Users> selectByCid(int id, int pageNum, int pageSize){
+        PageHelper.startPage(pageNum, pageSize);
         if(id == 0)
             return usersMapper.selectAll();
         else

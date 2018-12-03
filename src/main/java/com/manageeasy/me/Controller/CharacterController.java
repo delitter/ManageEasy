@@ -1,6 +1,7 @@
 package com.manageeasy.me.Controller;
 
 import com.manageeasy.me.Models.Characters;
+import com.manageeasy.me.Models.QueryModel;
 import com.manageeasy.me.Service.CharacterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,14 +9,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 @RequestMapping("/character")
 public class CharacterController {
 
-    @Autowired
     private CharacterService characterService;
+    @Autowired
+    public void setCharacterService(CharacterService characterService){
+        this.characterService = characterService;
+    }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ResponseEntity<Characters> add(@RequestBody Characters characters){
@@ -33,10 +38,9 @@ public class CharacterController {
     }
 
     @RequestMapping(value = "/query", method = RequestMethod.GET)
-    public ResponseEntity<List<Characters>> query(
+    public ResponseEntity<QueryModel> query(
             @RequestParam String content, @RequestParam int pageNum, @RequestParam int pageSize){
         return new ResponseEntity<>(
                 characterService.selectByComment(content, pageNum, pageSize),HttpStatus.ACCEPTED);
     }
-
 }
