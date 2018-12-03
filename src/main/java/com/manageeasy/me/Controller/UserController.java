@@ -25,11 +25,17 @@ import java.util.List;
 @Controller
 @RequestMapping("/user")
 public class UserController {
+    final UserService userService;
     @Autowired
-    private UserService userService;
+    public UserController(UserService userService){
+        this.userService = userService;
+    }
 
-    @Autowired
     private DepartmentService departmentService;
+    @Autowired
+    public void setUserService(DepartmentService departmentService){
+        this.departmentService = departmentService;
+    }
 
     //登录，成功则返回角色Id，否则返回-1
     @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -107,7 +113,8 @@ public class UserController {
     @RequestMapping(value = "/query", method = RequestMethod.GET)
     public ResponseEntity<QueryModel> query(
             @RequestParam int cid, @RequestParam int pageNum, @RequestParam int pageSize){
-        List<Users> users = userService.selectByCid(cid, pageNum, pageSize);
+        QueryModel temp = userService.selectByCid(cid, pageNum, pageSize);
+        List<Users> users = (List<Users>) temp.data;
         ArrayList<UserResp> userResps = new ArrayList<>();
         for(Users u : users){
             UserResp userResp = new UserResp();
@@ -115,14 +122,17 @@ public class UserController {
             userResp.setDepartments(departmentService.selectById(u.getdId()));
             userResps.add(userResp);
         }
-        return new ResponseEntity<>(new QueryModel<>(userResps, userResps.size()), HttpStatus.OK);
+        return new ResponseEntity<>(new QueryModel<>(userResps, temp.totalCount), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/resetpw", method = RequestMethod.POST)
     public ResponseEntity<String> resetpw(HttpServletRequest request){
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(false);
+        if(session == null)
+            return new ResponseEntity<>("please login!", HttpStatus.OK);
         Users user = (Users) session.getAttribute("user");
-        if(user.getuPassword() == request.getParameter("oldpw")){
+        System.out.println(user.getuPassword());
+        if(user.getuPassword().equals(request.getParameter("oldpw"))){
             user.setuPassword(request.getParameter("newpw"));
             userService.update(user);
             session.setAttribute("user", user);

@@ -1,7 +1,9 @@
 package com.manageeasy.me.Service;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.manageeasy.me.Daos.UsersMapper;
+import com.manageeasy.me.Models.QueryModel;
 import com.manageeasy.me.Models.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,8 +13,11 @@ import java.util.List;
 
 @Service
 public class UserService {
+    final UsersMapper usersMapper;
     @Autowired
-    private UsersMapper usersMapper;
+    public UserService(UsersMapper usersMapper){
+        this.usersMapper = usersMapper;
+    }
 
     public Users add(Users users){
         users.setuRegtime(new Date());
@@ -30,12 +35,18 @@ public class UserService {
         return users;
     }
 
-    public List<Users> selectByCid(int id, int pageNum, int pageSize){
-        PageHelper.startPage(pageNum, pageSize);
+    public QueryModel selectByCid(int id, int pageNum, int pageSize){
+        if(pageNum != 0)
+            PageHelper.startPage(pageNum, pageSize);
+        List<Users> users;
         if(id == 0)
-            return usersMapper.selectAll();
+            users = usersMapper.selectAll();
         else
-            return usersMapper.selectByCid(id);
+            users = usersMapper.selectByCid(id);
+        if(pageNum != 0)
+            return new QueryModel(users, ((Page)users).getTotal());
+        else
+            return new QueryModel(users, users.size());
     }
 
     public Users selectByName(String name){

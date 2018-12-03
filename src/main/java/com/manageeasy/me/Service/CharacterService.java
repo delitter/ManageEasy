@@ -17,8 +17,11 @@ import java.util.List;
 @Controller
 public class CharacterService {
 
+	final CharactersMapper charactersMapper;
 	@Autowired
-	private CharactersMapper charactersMapper;
+	public CharacterService(CharactersMapper charactersMapper){
+		this.charactersMapper = charactersMapper;
+	}
 	
 	public Characters add(Characters characters){
 		characters.setcRegtime(new Date());
