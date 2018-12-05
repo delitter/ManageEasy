@@ -2,6 +2,7 @@ package com.manageeasy.me.Controller;
 
 import com.manageeasy.me.Models.Notifications;
 import com.manageeasy.me.Models.Projecttype;
+import com.manageeasy.me.Models.QueryModel;
 import com.manageeasy.me.Service.FileService;
 import com.manageeasy.me.Service.NotificationService;
 import com.manageeasy.me.Service.ProjectTypeService;
@@ -16,19 +17,29 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 @RequestMapping("/notification")
 public class NotificationController {
+    final NotificationService notificationService;
     @Autowired
-    private NotificationService notificationService;
+    public NotificationController(NotificationService notificationService){
+        this.notificationService = notificationService;
+    }
 
-    @Autowired
     private FileService fileService;
-
     @Autowired
+    public void setFileService(FileService fileService){
+        this.fileService = fileService;
+    }
+
     private ProjectTypeService projectTypeService;
+    @Autowired
+    public void setProjectTypeService(ProjectTypeService projectTypeService){
+        this.projectTypeService = projectTypeService;
+    }
 
     private static String filePath = "";
 
@@ -36,35 +47,59 @@ public class NotificationController {
     public ResponseEntity<Notifications> add(@RequestBody Notifications notifications){
         notifications.setnFiles(filePath);
         filePath = "";
-        return new ResponseEntity<>(notificationService.add(notifications), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(notificationService.add(notifications), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/file", method = RequestMethod.POST)
     public ResponseEntity<String> file(@RequestParam MultipartFile file) throws IOException {
         filePath = fileService.addFile(file);
-        return new ResponseEntity<>(filePath, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(filePath, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ResponseEntity<Notifications> update(@RequestBody Notifications notifications){
-        return new ResponseEntity<>(notifications, HttpStatus.ACCEPTED);
+        if(!filePath.equals(""))
+            notifications.setnFiles(filePath);
+        filePath = "";
+        return new ResponseEntity<>(notifications, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public ResponseEntity<String> delete(@RequestParam int id){
-        return new ResponseEntity<>(notificationService.delete(id), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(notificationService.delete(id), HttpStatus.OK);
     }
 
+    class NotiResp{
+        private Notifications notifications;
+        private Projecttype projecttype;
+
+        public void setNotifications(Notifications notifications) {
+            this.notifications = notifications;
+        }
+
+        public void setProjecttype(Projecttype projecttype) {
+            this.projecttype = projecttype;
+        }
+    }
     @RequestMapping(value = "/query", method = RequestMethod.GET)
-    public ResponseEntity<List<Notifications>> query(
+    public ResponseEntity<QueryModel> query(
             @RequestParam int ntid, @RequestParam int pageNum, @RequestParam int pageSize){
-        return new ResponseEntity<>(notificationService.selectByType(ntid, pageNum, pageSize), HttpStatus.ACCEPTED);
+        QueryModel temp = notificationService.selectByType(ntid, pageNum, pageSize);
+        List<Notifications> notifications = (List<Notifications>)temp.data;
+        ArrayList<NotiResp> notiResps = new ArrayList<>();
+        for (Notifications n : notifications){
+            NotiResp notiResp = new NotiResp();
+            notiResp.setNotifications(n);
+            notiResp.setProjecttype(projectTypeService.selectById(n.getPtId()));
+            notiResps.add(notiResp);
+        }
+        return new ResponseEntity<>(new QueryModel<>(notiResps, temp.totalCount), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/queryWithProj", method = RequestMethod.GET)
-    public ResponseEntity<List<Notifications>> queryWithProj(
+    public ResponseEntity<QueryModel> queryWithProj(
             @RequestParam int ntid, @RequestParam int ptid, @RequestParam int pageNum, @RequestParam int pageSize){
-        return new ResponseEntity<>(notificationService.selectByNPtype(ntid, ptid, pageNum, pageSize), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(notificationService.selectByNPtype(ntid, ptid, pageNum, pageSize), HttpStatus.OK);
     }
 
     public class NotiFullInfo{
@@ -93,6 +128,6 @@ public class NotificationController {
         NotiFullInfo notiFullInfo = new NotiFullInfo();
         notiFullInfo.setNotifications(notificationService.selectFullInfo(id));
         notiFullInfo.setProjecttype(projectTypeService.selectById(notiFullInfo.getProjecttype().getPtId()));
-        return new ResponseEntity<>(notiFullInfo, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(notiFullInfo, HttpStatus.OK);
     }
 }

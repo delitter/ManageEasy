@@ -43,4 +43,9 @@ public interface JudgeMapper {
      * @mbg.generated
      */
     int updateByPrimaryKey(Judge record);
+
+    /**
+     * select by project state
+     */
+    List<Judge> selectByState(int state, int ptid);
 }

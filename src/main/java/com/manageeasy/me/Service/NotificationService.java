@@ -1,8 +1,10 @@
 package com.manageeasy.me.Service;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.manageeasy.me.Daos.NotificationsMapper;
 import com.manageeasy.me.Models.Notifications;
+import com.manageeasy.me.Models.QueryModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,17 +33,20 @@ public class NotificationService {
         return "Success!";
     }
 
-    public List<Notifications> selectByType(int id, int pageNum, int pageSize){//传0获取所有
+    public QueryModel selectByType(int id, int pageNum, int pageSize){//传0获取所有
         PageHelper.startPage(pageNum, pageSize);
+        List<Notifications> notifications;
         if(id == 0)
-            return notificationsMapper.selectAll();
+            notifications = notificationsMapper.selectAll();
         else
-            return notificationsMapper.selectByType(id);
+            notifications = notificationsMapper.selectByType(id);
+        return new QueryModel(notifications, ((Page)notifications).getTotal());
     }
 
-    public List<Notifications> selectByNPtype(int ntid, int ptid, int pageNum, int pageSize){
+    public QueryModel selectByNPtype(int ntid, int ptid, int pageNum, int pageSize){
         PageHelper.startPage(pageNum, pageSize);
-        return notificationsMapper.selectByNPtype(ntid, ptid);
+        List<Notifications> notifications = notificationsMapper.selectByNPtype(ntid, ptid);
+        return new QueryModel(notifications, ((Page)notifications).getTotal());
     }
 
     public Notifications selectFullInfo(int id){

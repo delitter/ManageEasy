@@ -17,6 +17,9 @@
     <result column="n_content" jdbcType="LONGVARCHAR" property="nContent" />
     <result column="n_comment" jdbcType="LONGVARCHAR" property="nComment" />
   </resultMap>
+  <resultMap id="CountResultMap" type="java.lang.Integer">
+    <result column="count" property="count" jdbcType="INTEGER"/>
+  </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     <!--
       WARNING - @mbg.generated

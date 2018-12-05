@@ -64,4 +64,35 @@
     select j_id, j_endTime, p_id, u_id, j_score, j_comment
     from judge
   </select>
+  <select id="selectByState" resultMap="ResultMapJ">
+    select *
+    from judge j, projects p, projectType pt, projectLevel pl, users u, departments d
+    where j.p_id = p.p_id and p.p_state = #{state,jdbcType=INTEGER} and p.pt_id = p.pt_id and p.pt_id = #{ptid,jdbcType=INTEGER}
+    and p.pl_id = pl.pl_id and p.u_id = u.u_id and u.d_id = d.d_id
+  </select>
+  <resultMap id="ResultMapJ" type="com.manageeasy.me.Models.Judge">
+    <id column="j_id" jdbcType="INTEGER" property="jId" />
+    <result column="j_endTime" jdbcType="DATE" property="jEndtime" />
+    <result column="j_score" jdbcType="DECIMAL" property="jScore" />
+    <result column="j_comment" jdbcType="LONGVARCHAR" property="jComment" />
+    <association property="project" javaType="com.manageeasy.me.Models.Projects">
+      <id property="id" column="p_id"/>
+      <result column="p_name" jdbcType="VARCHAR" property="pName" />
+      <result column="p_start" jdbcType="DATE" property="pStart" />
+      <result column="p_end" jdbcType="DATE" property="pEnd" />
+      <result column="de_file" jdbcType="VARCHAR" property="deFile" />
+      <association property="level" javaType="com.manageeasy.me.Models.Projectlevel">
+        <id column="pl_id" jdbcType="INTEGER" property="plId" />
+        <result column="pl_name" jdbcType="VARCHAR" property="plName" />
+      </association>
+    </association>
+    <association property="user" javaType="com.manageeasy.me.Models.Users">
+      <id column="u_id" jdbcType="INTEGER" property="uId" />
+      <result column="u_name" jdbcType="VARCHAR" property="uName" />
+      <association property="department" javaType="com.manageeasy.me.Models.Departments">
+        <id column="d_id" jdbcType="INTEGER" property="dId" />
+        <result column="d_name" jdbcType="VARCHAR" property="dName" />
+      </association>
+    </association>
+  </resultMap>
 </mapper>
