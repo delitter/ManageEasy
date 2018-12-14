@@ -1,6 +1,8 @@
 package com.manageeasy.me.Daos;
 
 import com.manageeasy.me.Models.Judge;
+import com.manageeasy.me.Models.JudgeQueryModel;
+
 import java.util.List;
 
 public interface JudgeMapper {
@@ -47,5 +49,6 @@ public interface JudgeMapper {
     /**
      * select by project state
      */
-    List<Judge> selectByState(int state, int ptid);
+    List<Judge> selectByState(int state, int ptid, int uid);
+
 }

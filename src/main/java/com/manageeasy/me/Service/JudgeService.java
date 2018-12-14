@@ -5,18 +5,13 @@ import com.github.pagehelper.PageHelper;
 import com.manageeasy.me.Daos.JudgeMapper;
 import com.manageeasy.me.Daos.ProjectsMapper;
 import com.manageeasy.me.Daos.UsersMapper;
-import com.manageeasy.me.Models.Judge;
-import com.manageeasy.me.Models.Projects;
-import com.manageeasy.me.Models.QueryModel;
-import com.manageeasy.me.Models.Users;
+import com.manageeasy.me.Models.*;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class JudgeService {
@@ -45,8 +40,9 @@ public class JudgeService {
         judge.setpId(pid);
         judge.setuId(users.get((int)(Math.random()*(users.size()))).getuId());
         Projects projects = projectsMapper.selectByPrimaryKey(pid);
-        projects.setpState(0);
+        projects.setpState(3);
         projectsMapper.updateByPrimaryKey(projects);
+        judgeMapper.insert(judge);
         return judge;
     }
 
@@ -58,9 +54,9 @@ public class JudgeService {
         return judge;
     }
 
-    public QueryModel selectBySPt(int state, int ptid, int pageNum, int pageSize){
+    public QueryModel selectBySPt(int uid, int state, int ptid, int pageNum, int pageSize){
         PageHelper.startPage(pageNum, pageSize);
-        List<Judge> judges = judgeMapper.selectByState(state, ptid);
+        List<Judge> judges = judgeMapper.selectByState(state, ptid, uid);
         return new QueryModel<>(judges, ((Page)judges).getTotal());
     }
 }

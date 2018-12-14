@@ -52,4 +52,8 @@ public class UserService {
     public Users selectByName(String name){
         return usersMapper.selectByName(name);
     }
+
+    public Users selectByKey(int id){
+        return usersMapper.selectByPrimaryKey(id);
+    }
 }
