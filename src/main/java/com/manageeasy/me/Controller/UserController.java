@@ -6,6 +6,8 @@ import com.manageeasy.me.Models.Users;
 import com.manageeasy.me.Service.DepartmentService;
 import com.manageeasy.me.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +39,7 @@ public class UserController {
 
     //登录，成功则返回角色Id，否则返回-1
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void login(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
         String name = request.getParameter("username");
         String p = request.getParameter("password");
         //System.out.println(u);
@@ -52,7 +55,17 @@ public class UserController {
             cookie.setPath("/");
             response.setStatus(200);
             response.addCookie(cookie);
-            response.getWriter().write(users.getcId().toString());
+            JSONObject res = new JSONObject();
+            response.setContentType("application/json;charset=UTF-8");
+            res.accumulate("cId", users.getcId());
+            res.accumulate("uPassword", users.getuPassword());
+            res.accumulate("dId", users.getdId());
+            res.accumulate("uId", users.getuId());
+            res.accumulate("uComment", users.getuComment());
+            res.accumulate("uName", users.getuName());
+            res.accumulate("uRegtime", users.getuRegtime());
+            res.accumulate("uUptime", users.getuUptime());
+            response.getWriter().write(res.toString());
         } else {
             response.setStatus(400);
             response.getWriter().write("-1");
