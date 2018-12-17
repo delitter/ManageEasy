@@ -51,4 +51,8 @@ public interface JudgeMapper {
      */
     List<Judge> selectByState(int state, int ptid, int uid);
 
+    /**
+     * select by project state without uid
+     */
+    List<Judge> selectByStateAll(int state, int ptid);
 }

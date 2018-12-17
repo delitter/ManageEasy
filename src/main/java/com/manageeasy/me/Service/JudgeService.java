@@ -35,7 +35,7 @@ public class JudgeService {
 
     public Judge add(int pid, Date endtime){
         Judge judge = new Judge();
-        List<Users> users = usersMapper.selectByCid(2);
+        List<Users> users = usersMapper.selectByCid(3);
         judge.setjEndtime(endtime);
         judge.setpId(pid);
         judge.setuId(users.get((int)(Math.random()*(users.size()))).getuId());
@@ -56,7 +56,11 @@ public class JudgeService {
 
     public QueryModel selectBySPt(int uid, int state, int ptid, int pageNum, int pageSize){
         PageHelper.startPage(pageNum, pageSize);
-        List<Judge> judges = judgeMapper.selectByState(state, ptid, uid);
+        List<Judge> judges;
+        if(uid != 0)
+             judges = judgeMapper.selectByState(state, ptid, uid);
+        else
+            judges = judgeMapper.selectByStateAll(state, ptid);
         return new QueryModel<>(judges, ((Page)judges).getTotal());
     }
 }

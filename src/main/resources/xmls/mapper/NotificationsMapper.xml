@@ -91,6 +91,6 @@
     select n_id, n_title, pt_id, n_deadline, n_files, n_regTime, n_upTime, nt_id, n_content,
     n_comment
     from notifications
-    where nt_id=#{ntId,jdbcType=INTEGER} and pt_id=#{ptId,jdbcType=INTEGER}
+    where nt_id=#{arg0} and pt_id=#{arg1}
   </select>
 </mapper>

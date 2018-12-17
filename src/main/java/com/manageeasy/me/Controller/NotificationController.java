@@ -80,6 +80,14 @@ public class NotificationController {
         public void setProjecttype(Projecttype projecttype) {
             this.projecttype = projecttype;
         }
+
+        public Notifications getNotifications() {
+            return notifications;
+        }
+
+        public Projecttype getProjecttype() {
+            return projecttype;
+        }
     }
     @RequestMapping(value = "/query", method = RequestMethod.GET)
     public ResponseEntity<QueryModel> query(
@@ -124,10 +132,10 @@ public class NotificationController {
     }
 
     @RequestMapping(value = "/queryFullInfo", method = RequestMethod.GET)
-    public ResponseEntity<NotiFullInfo> queryFullInfo(int id){
+    public ResponseEntity<NotiFullInfo> queryFullInfo(@RequestParam int id){
         NotiFullInfo notiFullInfo = new NotiFullInfo();
         notiFullInfo.setNotifications(notificationService.selectFullInfo(id));
-        notiFullInfo.setProjecttype(projectTypeService.selectById(notiFullInfo.getProjecttype().getPtId()));
+        notiFullInfo.setProjecttype(projectTypeService.selectById(notiFullInfo.getNotifications().getPtId()));
         return new ResponseEntity<>(notiFullInfo, HttpStatus.OK);
     }
 }

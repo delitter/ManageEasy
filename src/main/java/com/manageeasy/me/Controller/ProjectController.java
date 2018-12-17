@@ -1,11 +1,11 @@
 package com.manageeasy.me.Controller;
 
 import com.manageeasy.me.Daos.MessagesMapper;
-import com.manageeasy.me.Models.Messages;
-import com.manageeasy.me.Models.Projects;
+import com.manageeasy.me.Models.*;
 import com.manageeasy.me.Service.FileService;
 import com.manageeasy.me.Service.MessageService;
 import com.manageeasy.me.Service.ProjectService;
+import com.manageeasy.me.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,21 +16,41 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Controller
 @RequestMapping("/project")
 public class ProjectController {
-    @Autowired
     private ProjectService projectService;
-
     @Autowired
+    public ProjectController(ProjectService projectService){
+        this.projectService = projectService;
+    }
+
     private FileService fileService;
-
     @Autowired
+    public void setFileService(FileService fileService){
+        this.fileService = fileService;
+    }
+
     private MessageService messageService;
+    @Autowired
+    public void setMessageService(MessageService messageService){
+        this.messageService = messageService;
+    }
+
+    private UserService userService;
+    @Autowired
+    public void setUserService(UserService userService){
+        this.userService = userService;
+    }
+
+    private Departments departments;
 
     private static String de = "";
     private static String pr = "";
@@ -76,14 +96,65 @@ public class ProjectController {
         return new ResponseEntity<>(projectService.update(projects), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/queryByUPt", method = RequestMethod.GET)
-    public ResponseEntity<List<Projects>> queryByUPt(@RequestParam int uId, @RequestParam int type){
-        return new ResponseEntity<>(projectService.selectByUPt(uId, type), HttpStatus.OK);
-    }
+    class ProjResp{
+        private Projects project;
+        private Projectlevel level;
+        private Users user;
+        private Departments department;
 
-    @RequestMapping(value = "/queryBySPt", method = RequestMethod.POST)
-    public ResponseEntity<List<Projects>> queryBySPt(@RequestParam int state, @RequestParam int type){
-        return new ResponseEntity<>(projectService.selectBySPt(state, type), HttpStatus.OK);
+        public Projects getProject() {
+            return project;
+        }
+
+        public void setProject(Projects project) {
+            this.project = project;
+        }
+
+        public Projectlevel getLevel() {
+            return level;
+        }
+
+        public void setLevel(Projectlevel level) {
+            this.level = level;
+        }
+
+        public Users getUser() {
+            return user;
+        }
+
+        public void setUser(Users user) {
+            this.user = user;
+        }
+
+        public Departments getDepartment() {
+            return department;
+        }
+
+        public void setDepartment(Departments department) {
+            this.department = department;
+        }
+    }
+    @RequestMapping(value = "/queryByUSPt", method = RequestMethod.POST)
+    //@RequestParam int state, @RequestParam int type
+    public ResponseEntity<QueryModel> queryBySPt(HttpServletRequest request){
+        HttpSession session = request.getSession(false);
+        if(session == null)
+            return new ResponseEntity<>(new ArrayList<Projects>(), HttpStatus.BAD_REQUEST);
+        int state = Integer.valueOf(request.getParameter("state"));
+        int type = Integer.valueOf(request.getParameter("type"));
+        int pageNum = Integer.valueOf(request.getParameter("pageNum"));
+        int pageSize = Integer.valueOf(request.getParameter("pageSize"));
+        Users user = (Users) session.getAttribute("user");
+        QueryModel temp = projectService.selectByUSPt(user.getuId(), state, type, pageNum, pageSize)
+        List<ProjResp> projResps = new ArrayList<>();
+        List<Projects> projects = (List<Projects>)temp.data;
+        for(Projects p : projects){
+            ProjResp projResp = new ProjResp();
+            projResp.setProject(p);
+            projResp.setUser();
+            projResp.setDepartment();
+        }
+        return new ResponseEntity<>(, HttpStatus.OK);
     }
 
     //修改项目状态-审核项目

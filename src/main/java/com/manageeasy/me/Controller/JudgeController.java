@@ -51,11 +51,12 @@ public class JudgeController {
     }
 
     class JudgeResp{
-        public Judge judge;
-        public Projects projects;
-        public Projectlevel projectlevel;
-        public Users users;
-        public Departments departments;
+        private Judge judge;
+        private Projects projects;
+        private Projectlevel projectlevel;
+        private Users users;
+        private Departments departments;
+        private String mastername;
 
         public Judge getJudge() {
             return judge;
@@ -96,7 +97,16 @@ public class JudgeController {
         public void setDepartments(Departments departments) {
             this.departments = departments;
         }
+
+        public String getMastername() {
+            return mastername;
+        }
+
+        public void setMastername(String mastername) {
+            this.mastername = mastername;
+        }
     }
+
     //@RequestParam int state, @RequestParam int ptid, @RequestParam int pageNum, @RequestParam int pageSize
     @RequestMapping(value = "/query", method = RequestMethod.GET)
     public ResponseEntity<QueryModel> query(HttpServletRequest request){
@@ -108,7 +118,11 @@ public class JudgeController {
         int ptid = Integer.valueOf(request.getParameter("ptid"));
         int pageNum = Integer.valueOf(request.getParameter("pageNum"));
         int pageSize = Integer.valueOf(request.getParameter("pageSize"));
-        QueryModel temp = judgeService.selectBySPt(users.getuId(), state, ptid, pageNum, pageSize);
+        QueryModel temp;
+        if(users.getcId() == 3)
+            temp = judgeService.selectBySPt(users.getuId(), state, ptid, pageNum, pageSize);
+        else
+            temp = judgeService.selectBySPt(0, state, ptid, pageNum, pageSize);
         List<Judge> judges = (List<Judge>)temp.data;
         ArrayList<JudgeResp> judgeResps = new ArrayList<>();
         for(Judge j : judges){
@@ -116,8 +130,9 @@ public class JudgeController {
             judgeResp.setJudge(j);
             judgeResp.setProjects(projectService.selectByKey(j.getpId()));
             judgeResp.setProjectlevel(projectLevelService.selectByKey(judgeResp.getProjects().getPlId()));
-            judgeResp.setUsers(userService.selectByKey(j.getuId()));
+            judgeResp.setUsers(userService.selectByKey(judgeResp.getProjects().getuId()));
             judgeResp.setDepartments(departmentService.selectById(judgeResp.getUsers().getdId()));
+            judgeResp.setMastername(userService.selectByKey(j.getuId()).getuName());
             judgeResps.add(judgeResp);
         }
         return new ResponseEntity<>(new QueryModel(judgeResps, temp.totalCount), HttpStatus.OK);

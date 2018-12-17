@@ -70,6 +70,12 @@
     where   j.u_id = #{uid,jdbcType=INTEGER} and j.p_id in (
     select p.p_id from projects p where p.p_state = #{state,jdbcType=INTEGER} and p.pt_id = #{ptid,jdbcType=INTEGER})
   </select>
+  <select id="selectByStateAll" resultMap="BaseResultMap">
+    select j.j_id, j.j_endTime, j.p_id, j.u_id, j.j_score, j.j_comment
+    from judge j
+    where  j.p_id in (
+    select p.p_id from projects p where p.p_state = #{state,jdbcType=INTEGER} and p.pt_id = #{ptid,jdbcType=INTEGER})
+  </select>
   <!--resultMap id="ResultMapJ" type="com.manageeasy.me.Models.Judge">
     <id column="j_id" jdbcType="INTEGER" property="jId" />
     <result column="j_endTime" jdbcType="DATE" property="jEndtime" />

@@ -45,9 +45,9 @@ public interface ProjectsMapper {
     int updateByPrimaryKey(Projects record);
 
     /**
-     * select by user id and project type
+     * select by state and project type and user id
      */
-    List<Projects> selectByUPt(int uId, int ptId);
+    List<Projects> selectByUSPt(int uid, int pState, int ptId);
 
     /**
      * select by state and project type
