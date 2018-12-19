@@ -50,13 +50,20 @@ public class JudgeController {
         this.departmentService = departmentService;
     }
 
+    private ProjectTypeService projectTypeService;
+    @Autowired
+    public void setProjectTypeService(ProjectTypeService projectTypeService){
+        this.projectTypeService = projectTypeService;
+    }
+
     class JudgeResp{
         private Judge judge;
         private Projects projects;
-        private Projectlevel projectlevel;
+        private String projectlevel;
         private Users users;
-        private Departments departments;
+        private String department;
         private String mastername;
+        private String projecttype;
 
         public Judge getJudge() {
             return judge;
@@ -74,11 +81,11 @@ public class JudgeController {
             this.projects = projects;
         }
 
-        public Projectlevel getProjectlevel() {
+        public String getProjectlevel() {
             return projectlevel;
         }
 
-        public void setProjectlevel(Projectlevel projectlevel) {
+        public void setProjectlevel(String projectlevel) {
             this.projectlevel = projectlevel;
         }
 
@@ -90,12 +97,12 @@ public class JudgeController {
             this.users = users;
         }
 
-        public Departments getDepartments() {
-            return departments;
+        public String getDepartment() {
+            return department;
         }
 
-        public void setDepartments(Departments departments) {
-            this.departments = departments;
+        public void setDepartment(String department) {
+            this.department = department;
         }
 
         public String getMastername() {
@@ -105,9 +112,18 @@ public class JudgeController {
         public void setMastername(String mastername) {
             this.mastername = mastername;
         }
+
+        public String getProjecttype() {
+            return projecttype;
+        }
+
+        public void setProjecttype(String projecttype) {
+            this.projecttype = projecttype;
+        }
     }
 
     //@RequestParam int state, @RequestParam int ptid, @RequestParam int pageNum, @RequestParam int pageSize
+    //只有管理员能获得所有的，其他只能获得自己的
     @RequestMapping(value = "/query", method = RequestMethod.GET)
     public ResponseEntity<QueryModel> query(HttpServletRequest request){
         HttpSession session = request.getSession(false);
@@ -119,20 +135,21 @@ public class JudgeController {
         int pageNum = Integer.valueOf(request.getParameter("pageNum"));
         int pageSize = Integer.valueOf(request.getParameter("pageSize"));
         QueryModel temp;
-        if(users.getcId() == 3)
-            temp = judgeService.selectBySPt(users.getuId(), state, ptid, pageNum, pageSize);
-        else
+        if(users.getcId() == 1)
             temp = judgeService.selectBySPt(0, state, ptid, pageNum, pageSize);
+        else
+            temp = judgeService.selectBySPt(users.getuId(), state, ptid, pageNum, pageSize);
         List<Judge> judges = (List<Judge>)temp.data;
         ArrayList<JudgeResp> judgeResps = new ArrayList<>();
         for(Judge j : judges){
             JudgeResp judgeResp = new JudgeResp();
             judgeResp.setJudge(j);
             judgeResp.setProjects(projectService.selectByKey(j.getpId()));
-            judgeResp.setProjectlevel(projectLevelService.selectByKey(judgeResp.getProjects().getPlId()));
+            judgeResp.setProjectlevel(projectLevelService.selectByKey(judgeResp.getProjects().getPlId()).getPlName());
             judgeResp.setUsers(userService.selectByKey(judgeResp.getProjects().getuId()));
-            judgeResp.setDepartments(departmentService.selectById(judgeResp.getUsers().getdId()));
+            judgeResp.setDepartment(departmentService.selectById(judgeResp.getUsers().getdId()).getdName());
             judgeResp.setMastername(userService.selectByKey(j.getuId()).getuName());
+            judgeResp.setProjecttype(projectTypeService.selectById(judgeResp.getProjects().getPtId()).getPtName());
             judgeResps.add(judgeResp);
         }
         return new ResponseEntity<>(new QueryModel(judgeResps, temp.totalCount), HttpStatus.OK);
@@ -140,6 +157,9 @@ public class JudgeController {
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ResponseEntity<Judge> add(@RequestParam int id, @RequestBody Date endtime){
+        Messages messages = new Messages();
+        messages.setMtId(1);
+        messages.setmContent("项目"+id+"从状态1转变到状态3");
         return new ResponseEntity<>(judgeService.add(id, endtime), HttpStatus.OK);
     }
 

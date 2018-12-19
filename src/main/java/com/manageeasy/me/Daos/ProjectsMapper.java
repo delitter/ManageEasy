@@ -53,4 +53,9 @@ public interface ProjectsMapper {
      * select by state and project type
      */
     List<Projects> selectBySPt(int pState, int ptId);
+
+    /**
+     * select by name, level, user id
+     */
+    Projects selectByNULv(int level, int uid, String name);
 }

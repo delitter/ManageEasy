@@ -44,4 +44,8 @@ public class ProjectService {
     public Projects selectByKey(int id){
         return projectsMapper.selectByPrimaryKey(id);
     }
+
+    public Projects selectByNULv(int level, int uid, String name){
+        return projectsMapper.selectByNULv(level, uid, name);
+    }
 }

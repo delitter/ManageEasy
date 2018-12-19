@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -95,6 +96,7 @@ public class UserController {
     //修改
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ResponseEntity<Users> update(@RequestBody Users users){
+        users.setuUptime(new Date());
         return new ResponseEntity<>(userService.update(users), HttpStatus.OK);
     }
 

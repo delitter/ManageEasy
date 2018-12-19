@@ -104,4 +104,10 @@
     from projects
     where p_state = #{pState,jdbcType=INTEGER} and pt_id = #{ptId,jdbcType=INTEGER}
   </select>
+  <select id="selectByNULv" resultMap="BaseResultMap">
+    select  p_id, pt_id, pl_id, p_name, p_start, p_end, u_id, u_phone, u_email, ma_id,
+    de_file, pr_file, me_file, fi_file, p_state, f_reason
+    from projects
+    where pl_id = #{level,jdbcType=INTEGER} and u_id = #{uid, jdbcType=INTEGER} and p_name = #{name, jdbcType=VARCHAR}
+  </select>
 </mapper>

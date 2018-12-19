@@ -110,30 +110,9 @@ public class NotificationController {
         return new ResponseEntity<>(notificationService.selectByNPtype(ntid, ptid, pageNum, pageSize), HttpStatus.OK);
     }
 
-    public class NotiFullInfo{
-        private Notifications notifications;
-        private Projecttype projecttype;
-
-        public Notifications getNotifications() {
-            return notifications;
-        }
-
-        public void setNotifications(Notifications notifications) {
-            this.notifications = notifications;
-        }
-
-        public Projecttype getProjecttype() {
-            return projecttype;
-        }
-
-        public void setProjecttype(Projecttype projecttype) {
-            this.projecttype = projecttype;
-        }
-    }
-
     @RequestMapping(value = "/queryFullInfo", method = RequestMethod.GET)
-    public ResponseEntity<NotiFullInfo> queryFullInfo(@RequestParam int id){
-        NotiFullInfo notiFullInfo = new NotiFullInfo();
+    public ResponseEntity<NotiResp> queryFullInfo(@RequestParam int id){
+        NotiResp notiFullInfo = new NotiResp();
         notiFullInfo.setNotifications(notificationService.selectFullInfo(id));
         notiFullInfo.setProjecttype(projectTypeService.selectById(notiFullInfo.getNotifications().getPtId()));
         return new ResponseEntity<>(notiFullInfo, HttpStatus.OK);

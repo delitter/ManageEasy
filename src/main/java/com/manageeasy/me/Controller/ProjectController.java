@@ -2,10 +2,7 @@ package com.manageeasy.me.Controller;
 
 import com.manageeasy.me.Daos.MessagesMapper;
 import com.manageeasy.me.Models.*;
-import com.manageeasy.me.Service.FileService;
-import com.manageeasy.me.Service.MessageService;
-import com.manageeasy.me.Service.ProjectService;
-import com.manageeasy.me.Service.UserService;
+import com.manageeasy.me.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +47,23 @@ public class ProjectController {
         this.userService = userService;
     }
 
-    private Departments departments;
+    private ProjectLevelService projectLevelService;
+    @Autowired
+    public void setProjectLevelService(ProjectLevelService projectLevelService){
+        this.projectLevelService = projectLevelService;
+    }
+
+    private ProjectTypeService projectTypeService;
+    @Autowired
+    public void setProjectTypeService(ProjectTypeService projectTypeService){
+        this.projectTypeService = projectTypeService;
+    }
+
+    private DepartmentService departmentService;
+    @Autowired
+    public void setDepartmentService(DepartmentService departmentService){
+        this.departmentService = departmentService;
+    }
 
     private static String de = "";
     private static String pr = "";
@@ -98,9 +111,10 @@ public class ProjectController {
 
     class ProjResp{
         private Projects project;
-        private Projectlevel level;
+        private String level;
         private Users user;
-        private Departments department;
+        private String department;
+        private String projecttype;
 
         public Projects getProject() {
             return project;
@@ -110,11 +124,11 @@ public class ProjectController {
             this.project = project;
         }
 
-        public Projectlevel getLevel() {
+        public String getLevel() {
             return level;
         }
 
-        public void setLevel(Projectlevel level) {
+        public void setLevel(String level) {
             this.level = level;
         }
 
@@ -126,35 +140,51 @@ public class ProjectController {
             this.user = user;
         }
 
-        public Departments getDepartment() {
+        public String getDepartment() {
             return department;
         }
 
-        public void setDepartment(Departments department) {
+        public void setDepartment(String department) {
             this.department = department;
         }
+
+        public String getProjecttype() {
+            return projecttype;
+        }
+
+        public void setProjecttype(String projecttype) {
+            this.projecttype = projecttype;
+        }
     }
-    @RequestMapping(value = "/queryByUSPt", method = RequestMethod.POST)
-    //@RequestParam int state, @RequestParam int type
+    //只有管理员能获得所有的，其他只能获得自己的
+    @RequestMapping(value = "/queryByUSPt", method = RequestMethod.GET)
+    //@RequestParam int state, @RequestParam int type, int pageNum, int pageSize
     public ResponseEntity<QueryModel> queryBySPt(HttpServletRequest request){
         HttpSession session = request.getSession(false);
         if(session == null)
-            return new ResponseEntity<>(new ArrayList<Projects>(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new QueryModel("please login!", 0), HttpStatus.BAD_REQUEST);
         int state = Integer.valueOf(request.getParameter("state"));
         int type = Integer.valueOf(request.getParameter("type"));
         int pageNum = Integer.valueOf(request.getParameter("pageNum"));
         int pageSize = Integer.valueOf(request.getParameter("pageSize"));
         Users user = (Users) session.getAttribute("user");
-        QueryModel temp = projectService.selectByUSPt(user.getuId(), state, type, pageNum, pageSize)
+        QueryModel temp;
+        if(user.getcId() == 1)
+            temp= projectService.selectByUSPt(0, state, type, pageNum, pageSize);
+        else
+            temp= projectService.selectByUSPt(user.getuId(), state, type, pageNum, pageSize);
         List<ProjResp> projResps = new ArrayList<>();
         List<Projects> projects = (List<Projects>)temp.data;
         for(Projects p : projects){
             ProjResp projResp = new ProjResp();
             projResp.setProject(p);
-            projResp.setUser();
-            projResp.setDepartment();
+            projResp.setUser(userService.selectByKey(p.getuId()));
+            projResp.setDepartment(departmentService.selectById(projResp.getUser().getdId()).getdName());
+            projResp.setLevel(projectLevelService.selectByKey(p.getPlId()).getPlName());
+            projResp.setProjecttype(projectTypeService.selectById(p.getPtId()).getPtName());
+            projResps.add(projResp);
         }
-        return new ResponseEntity<>(, HttpStatus.OK);
+        return new ResponseEntity<>(new QueryModel(projResps, temp.totalCount), HttpStatus.OK);
     }
 
     //修改项目状态-审核项目
@@ -170,8 +200,36 @@ public class ProjectController {
         }
         else
             messages.setMtId(3);
-        messages.setmContent("项目从状态"+original.getpState()+"转变到状态"+projects.getpState());
+        messages.setmContent("项目"+projects.getpId()+"从状态"+original.getpState()+"转变到状态"+projects.getpState());
         messageService.add(messages);
+        return new ResponseEntity<>(projects, HttpStatus.OK);
+    }
+
+    //设定，提交完文件之后统一到审核状态
+    //int level, String name
+    @RequestMapping(value = "/saveMF", method = RequestMethod.GET)
+    public ResponseEntity<Object> saveMe(HttpServletRequest request){
+        HttpSession session = request.getSession(false);
+        Projects projects;
+        if(session == null)
+            return new ResponseEntity<>("please login!", HttpStatus.BAD_REQUEST);
+        int level = Integer.valueOf(request.getParameter("level"));
+        String name = request.getParameter("name");
+        Users users = (Users) session.getAttribute("user");
+        projects = projectService.selectByNULv(level, users.getuId(), name);
+        if(!me.equals("")) {
+            projects.setMeFile(me);
+            projects.setpState(6);
+            me = "";
+        }
+        else if(!fi.equals("")){
+            projects.setFiFile(fi);
+            projects.setpState(9);
+            fi="";
+        }
+        else
+            return new ResponseEntity<>("no file to save!", HttpStatus.BAD_REQUEST);
+        projectService.update(projects);
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 }
