@@ -6,6 +6,7 @@ import com.manageeasy.me.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -86,7 +87,9 @@ public class ProjectController {
         de = fileService.addFile(file);
         JSONObject res = new JSONObject();
         res.accumulate("address", de);
-        return new ResponseEntity<>(res.toString(), HttpStatus.OK);
+        HttpHeaders header = new HttpHeaders();
+        header.add("Content-Type","application/json;carset=UTF-8");
+        return new ResponseEntity<>(res.toString(), header, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/addPr", method = RequestMethod.POST)
@@ -94,7 +97,9 @@ public class ProjectController {
         pr = fileService.addFile(file);
         JSONObject res = new JSONObject();
         res.accumulate("address", pr);
-        return new ResponseEntity<>(res.toString(), HttpStatus.OK);
+        HttpHeaders header = new HttpHeaders();
+        header.add("Content-Type","application/json;carset=UTF-8");
+        return new ResponseEntity<>(res.toString(), header, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/addMe", method = RequestMethod.POST)
@@ -102,7 +107,9 @@ public class ProjectController {
         me = fileService.addFile(file);
         JSONObject res = new JSONObject();
         res.accumulate("address", me);
-        return new ResponseEntity<>(res.toString(), HttpStatus.OK);
+        HttpHeaders header = new HttpHeaders();
+        header.add("Content-Type","application/json;carset=UTF-8");
+        return new ResponseEntity<>(res.toString(), header, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/addFi", method = RequestMethod.POST)
@@ -110,7 +117,9 @@ public class ProjectController {
         fi = fileService.addFile(file);
         JSONObject res = new JSONObject();
         res.accumulate("address", fi);
-        return new ResponseEntity<>(res.toString(), HttpStatus.OK);
+        HttpHeaders header = new HttpHeaders();
+        header.add("Content-Type","application/json;carset=UTF-8");
+        return new ResponseEntity<>(res.toString(), header, HttpStatus.OK);
     }
 
     //只是修改基本信息，不是修改状态

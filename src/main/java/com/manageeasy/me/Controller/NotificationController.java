@@ -9,13 +9,12 @@ import com.manageeasy.me.Service.ProjectTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -57,7 +56,9 @@ public class NotificationController {
         filePath = fileService.addFile(file);
         JSONObject res = new JSONObject();
         res.accumulate("address", filePath);
-        return new ResponseEntity<>(res.toString(), HttpStatus.OK);
+        HttpHeaders header = new HttpHeaders();
+        header.add("Content-Type","application/json;carset=UTF-8");
+        return new ResponseEntity<>(res.toString(), header, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
