@@ -55,4 +55,8 @@ public class CharacterService {
 		else
 			return new QueryModel(characters, characters.size());
 	}
+
+	public List<Characters> selectAll(){
+		return charactersMapper.selectAll();
+	}
 }

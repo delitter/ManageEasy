@@ -7,6 +7,8 @@ import com.manageeasy.me.Service.FileService;
 import com.manageeasy.me.Service.NotificationService;
 import com.manageeasy.me.Service.ProjectTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -51,9 +53,11 @@ public class NotificationController {
     }
 
     @RequestMapping(value = "/file", method = RequestMethod.POST)
-    public ResponseEntity<String> file(@RequestParam MultipartFile file) throws IOException {
+    public ResponseEntity<String> file(@RequestParam MultipartFile file) throws IOException, JSONException {
         filePath = fileService.addFile(file);
-        return new ResponseEntity<>(filePath, HttpStatus.OK);
+        JSONObject res = new JSONObject();
+        res.accumulate("address", filePath);
+        return new ResponseEntity<>(res.toString(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)

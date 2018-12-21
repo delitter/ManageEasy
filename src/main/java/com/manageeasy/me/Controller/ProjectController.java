@@ -4,6 +4,8 @@ import com.manageeasy.me.Daos.MessagesMapper;
 import com.manageeasy.me.Models.*;
 import com.manageeasy.me.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -80,27 +82,35 @@ public class ProjectController {
     }
 
     @RequestMapping(value = "/addDe", method = RequestMethod.POST)
-    public ResponseEntity<String> addDe(@RequestParam MultipartFile file) throws IOException {
+    public ResponseEntity<String> addDe(@RequestParam MultipartFile file) throws IOException, JSONException {
         de = fileService.addFile(file);
-        return new ResponseEntity<>(de, HttpStatus.OK);
+        JSONObject res = new JSONObject();
+        res.accumulate("address", de);
+        return new ResponseEntity<>(res.toString(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/addPr", method = RequestMethod.POST)
-    public ResponseEntity<String> addPr(@RequestParam MultipartFile file) throws IOException {
+    public ResponseEntity<String> addPr(@RequestParam MultipartFile file) throws IOException, JSONException {
         pr = fileService.addFile(file);
-        return new ResponseEntity<>(pr, HttpStatus.OK);
+        JSONObject res = new JSONObject();
+        res.accumulate("address", pr);
+        return new ResponseEntity<>(res.toString(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/addMe", method = RequestMethod.POST)
-    public ResponseEntity<String> addMe(@RequestParam MultipartFile file) throws IOException {
+    public ResponseEntity<String> addMe(@RequestParam MultipartFile file) throws IOException, JSONException {
         me = fileService.addFile(file);
-        return new ResponseEntity<>(me, HttpStatus.OK);
+        JSONObject res = new JSONObject();
+        res.accumulate("address", me);
+        return new ResponseEntity<>(res.toString(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/addFi", method = RequestMethod.POST)
-    public ResponseEntity<String> addFi(@RequestParam MultipartFile file) throws IOException {
+    public ResponseEntity<String> addFi(@RequestParam MultipartFile file) throws IOException, JSONException {
         fi = fileService.addFile(file);
-        return new ResponseEntity<>(fi, HttpStatus.OK);
+        JSONObject res = new JSONObject();
+        res.accumulate("address", fi);
+        return new ResponseEntity<>(res.toString(), HttpStatus.OK);
     }
 
     //只是修改基本信息，不是修改状态
