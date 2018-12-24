@@ -66,7 +66,7 @@ public class NotificationController {
         if(!filePath.equals(""))
             notifications.setnFiles(filePath);
         filePath = "";
-        return new ResponseEntity<>(notifications, HttpStatus.OK);
+        return new ResponseEntity<>(notificationService.update(notifications), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
