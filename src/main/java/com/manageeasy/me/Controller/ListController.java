@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.util.List;
 
 @Controller
-@RequestMapping("/List")
+@RequestMapping("/list")
 public class ListController {
     private CharacterService characterService;
     private DepartmentService departmentService;
