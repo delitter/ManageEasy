@@ -151,7 +151,7 @@ public class UserController {
             user.setuPassword(request.getParameter("newpw"));
             userService.update(user);
             session.setAttribute("user", user);
-            return new ResponseEntity<>("Success!", HttpStatus.OK);
+            return new ResonpseEntity<>("Success!", HttpStatus.OK);
         }
         else
             return new ResponseEntity<>("incorrect oldpw!", HttpStatus.OK);
