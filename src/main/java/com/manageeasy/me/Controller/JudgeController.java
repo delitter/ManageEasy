@@ -56,72 +56,6 @@ public class JudgeController {
         this.projectTypeService = projectTypeService;
     }
 
-    class JudgeResp{
-        private Judge judge;
-        private Projects projects;
-        private String projectlevel;
-        private Users users;
-        private String department;
-        private String mastername;
-        private String projecttype;
-
-        public Judge getJudge() {
-            return judge;
-        }
-
-        public void setJudge(Judge judge) {
-            this.judge = judge;
-        }
-
-        public Projects getProjects() {
-            return projects;
-        }
-
-        public void setProjects(Projects projects) {
-            this.projects = projects;
-        }
-
-        public String getProjectlevel() {
-            return projectlevel;
-        }
-
-        public void setProjectlevel(String projectlevel) {
-            this.projectlevel = projectlevel;
-        }
-
-        public Users getUsers() {
-            return users;
-        }
-
-        public void setUsers(Users users) {
-            this.users = users;
-        }
-
-        public String getDepartment() {
-            return department;
-        }
-
-        public void setDepartment(String department) {
-            this.department = department;
-        }
-
-        public String getMastername() {
-            return mastername;
-        }
-
-        public void setMastername(String mastername) {
-            this.mastername = mastername;
-        }
-
-        public String getProjecttype() {
-            return projecttype;
-        }
-
-        public void setProjecttype(String projecttype) {
-            this.projecttype = projecttype;
-        }
-    }
-
     //@RequestParam int state, @RequestParam int ptid, @RequestParam int pageNum, @RequestParam int pageSize
     //只有管理员能获得所有的，其他只能获得自己的
     @RequestMapping(value = "/query", method = RequestMethod.GET)
@@ -140,16 +74,35 @@ public class JudgeController {
         else
             temp = judgeService.selectBySPt(users.getuId(), state, ptid, pageNum, pageSize);
         List<Judge> judges = (List<Judge>)temp.data;
-        ArrayList<JudgeResp> judgeResps = new ArrayList<>();
+        ArrayList<JudgeQueryModel> judgeResps = new ArrayList<>();
         for(Judge j : judges){
-            JudgeResp judgeResp = new JudgeResp();
-            judgeResp.setJudge(j);
-            judgeResp.setProjects(projectService.selectByKey(j.getpId()));
-            judgeResp.setProjectlevel(projectLevelService.selectByKey(judgeResp.getProjects().getPlId()).getPlName());
-            judgeResp.setUsers(userService.selectByKey(judgeResp.getProjects().getuId()));
-            judgeResp.setDepartment(departmentService.selectById(judgeResp.getUsers().getdId()).getdName());
+            JudgeQueryModel judgeResp = new JudgeQueryModel();
+            judgeResp.setjEndtime(j.getjEndtime());
+            judgeResp.setjScore(j.getjScore());
+            judgeResp.setjComment(j.getjComment());
+            Projects p = projectService.selectByKey(j.getpId());
+            judgeResp.setpId(p.getpId());
+            judgeResp.setPtId(p.getPtId());
+            judgeResp.setPlId(p.getPlId());
+            judgeResp.setpName(p.getpName());
+            judgeResp.setpStart(p.getpStart());
+            judgeResp.setpEnd(p.getpEnd());
+            judgeResp.setuId(p.getuId());
+            judgeResp.setuPhone(p.getuPhone());
+            judgeResp.setuEmail(p.getuEmail());
+            judgeResp.setMaId(p.getMaId());
+            judgeResp.setDeFile(p.getDeFile());
+            judgeResp.setPrFile(p.getPrFile());
+            judgeResp.setMeFile(p.getMeFile());
+            judgeResp.setFiFile(p.getFiFile());
+            judgeResp.setpState(p.getpState());
+            judgeResp.setfReason(p.getfReason());
+            judgeResp.setProjectlevel(projectLevelService.selectByKey(p.getPlId()).getPlName());
+            Users u = userService.selectByKey(p.getuId());
+            judgeResp.setuName(u.getuName());
+            judgeResp.setDepartment(departmentService.selectById(u.getdId()).getdName());
             judgeResp.setMastername(userService.selectByKey(j.getuId()).getuName());
-            judgeResp.setProjecttype(projectTypeService.selectById(judgeResp.getProjects().getPtId()).getPtName());
+            judgeResp.setProjecttype(projectTypeService.selectById(p.getPtId()).getPtName());
             judgeResps.add(judgeResp);
         }
         return new ResponseEntity<>(new QueryModel(judgeResps, temp.totalCount), HttpStatus.OK);

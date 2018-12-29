@@ -1,7 +1,6 @@
 package com.manageeasy.me.Daos;
 
 import com.manageeasy.me.Models.Judge;
-import com.manageeasy.me.Models.JudgeQueryModel;
 
 import java.util.List;
 
