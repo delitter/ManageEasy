@@ -60,8 +60,16 @@
     select m_id, m_time, mt_id, m_content
     from messages
   </select>
-  <select id="countAll" resultMap="BaseResultMap">
+  <resultMap id="CountResultMap" type="java.lang.Integer">
+    <result column="count(m_id)" jdbcType="INTEGER" property="count"/>
+  </resultMap>
+  <select id="countAll" resultMap="CountResultMap">
     select count(m_id)
     from messages
+  </select>
+  <select id="selectByType" resultMap="BaseResultMap">
+    select m_id, m_time, mt_id, m_content
+    from messages
+    where mt_id = #{mtId,jdbcType=INTEGER}
   </select>
 </mapper>

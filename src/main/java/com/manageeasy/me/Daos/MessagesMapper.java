@@ -48,4 +48,9 @@ public interface MessagesMapper {
      * count the num of messages
      */
     int countAll();
+
+    /**
+     * select by type
+     */
+    List<Messages> selectByType(int mtId);
 }

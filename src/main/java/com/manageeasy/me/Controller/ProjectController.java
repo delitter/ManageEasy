@@ -221,7 +221,7 @@ public class ProjectController {
             messages.setMtId(3);
         messages.setmContent("项目"+projects.getpId()+"从状态"+original.getpState()+"转变到状态"+projects.getpState());
         messageService.add(messages);
-        return new ResponseEntity<>(projects, HttpStatus.OK);
+        return new ResponseEntity<>(projectService.update(projects), HttpStatus.OK);
     }
 
     //设定，提交完文件之后统一到审核状态
