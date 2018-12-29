@@ -55,6 +55,11 @@ public interface ProjectsMapper {
     List<Projects> selectBySPt(int pState, int ptId);
 
     /**
+     * select by only project type
+     */
+    List<Projects> selectByUPt(int uid, int ptId);
+
+    /**
      * select by name, level, user id
      */
     Projects selectByNULv(int level, int uid, String name);

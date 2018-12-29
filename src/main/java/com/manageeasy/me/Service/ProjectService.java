@@ -34,8 +34,10 @@ public class ProjectService {
     public QueryModel selectByUSPt(int uid, int state, int pType, int pageNum, int pageSize){
         PageHelper.startPage(pageNum, pageSize);
         List<Projects> projects;
-        if(uid != 0)
+        if(uid > 0 && state >= 0)
             projects = projectsMapper.selectByUSPt(uid, state, pType);
+        else if(uid > 0 && state < 0)
+            projects = projectsMapper.selectByUPt(uid, pType);
         else
             projects = projectsMapper.selectBySPt(state, pType);
         return new QueryModel(projects, ((Page)projects).getTotal());
