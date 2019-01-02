@@ -77,6 +77,7 @@ public class JudgeController {
         ArrayList<JudgeQueryModel> judgeResps = new ArrayList<>();
         for(Judge j : judges){
             JudgeQueryModel judgeResp = new JudgeQueryModel();
+            judgeResp.setjId(j.getjId());
             judgeResp.setjEndtime(j.getjEndtime());
             judgeResp.setjScore(j.getjScore());
             judgeResp.setjComment(j.getjComment());

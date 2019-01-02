@@ -15,6 +15,7 @@ public class JudgeQueryModel {
     private Integer pId;
     private Integer ptId;
     private Integer plId;
+    private Integer jId;
     private String pName;
     private Date pStart;
     private Date pEnd;
@@ -28,6 +29,14 @@ public class JudgeQueryModel {
     private String fiFile;
     private Integer pState;
     private String fReason;
+
+    public Integer getjId() {
+        return jId;
+    }
+
+    public void setjId(Integer jId) {
+        this.jId = jId;
+    }
 
     public Date getjEndtime() {
         return jEndtime;
