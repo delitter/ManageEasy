@@ -119,6 +119,9 @@ public class JudgeController {
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ResponseEntity<Judge> update(@RequestBody Judge judge){
-        return new ResponseEntity<>(judgeService.update(judge), HttpStatus.OK);
+        Judge origin = judgeService.selectByKey(judge.getjId());
+        origin.setjScore(judge.getjScore());
+        origin.setjComment(judge.getjComment());
+        return new ResponseEntity<>(judgeService.update(origin), HttpStatus.OK);
     }
 }

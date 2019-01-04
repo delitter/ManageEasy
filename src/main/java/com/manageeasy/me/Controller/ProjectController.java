@@ -209,6 +209,8 @@ public class ProjectController {
     //修改项目状态-审核项目
     @RequestMapping(value = "/setState", method = RequestMethod.POST)
     public ResponseEntity<Projects> setState(@RequestBody Projects projects){
+        Projects origin = projectService.selectByKey(projects.getpId());
+        origin.setpState(projects.getpState());
         Messages messages = new Messages();
         Projects original = projectService.selectByKey(projects.getpId());
         if(original.getpState() <= 5){
@@ -221,7 +223,7 @@ public class ProjectController {
             messages.setMtId(3);
         messages.setmContent("项目"+projects.getpId()+"从状态"+original.getpState()+"转变到状态"+projects.getpState());
         messageService.add(messages);
-        return new ResponseEntity<>(projectService.update(projects), HttpStatus.OK);
+        return new ResponseEntity<>(projectService.update(origin), HttpStatus.OK);
     }
 
     //设定，提交完文件之后统一到审核状态

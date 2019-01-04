@@ -63,4 +63,8 @@ public class JudgeService {
             judges = judgeMapper.selectByStateAll(state, ptid);
         return new QueryModel<>(judges, ((Page)judges).getTotal());
     }
+
+    public Judge selectByKey(int jId){
+        return judgeMapper.selectByPrimaryKey(jId);
+    }
 }
